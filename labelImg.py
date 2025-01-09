@@ -113,7 +113,7 @@ class MainWindow(QMainWindow, WindowMixin):
         if self.label_hist:
             self.default_label = self.label_hist[0]
         else:
-            print("Not find:/data/predefined_classes.txt (optional)")
+            print(f"Not find:{default_prefdef_class_file} (optional)")
 
         # Main widgets and related state.
         self.label_dialog = LabelDialog(parent=self, list_item=self.label_hist)
@@ -1681,6 +1681,15 @@ def read(filename, default=None):
     except:
         return default
 
+# 获取当前运行路径
+def get_current_path():
+    if getattr(sys, 'frozen', False):
+        # PyInstaller设置的属性，程序是否打包环境中运行
+        return os.path.dirname(sys.executable)
+    else:
+        # 正常情况下返回脚本文件的目录
+        return os.path.dirname(os.path.abspath(__file__))
+current_dir = get_current_path()
 
 def get_main_app(argv=None):
     """
@@ -1696,7 +1705,7 @@ def get_main_app(argv=None):
     argparser = argparse.ArgumentParser()
     argparser.add_argument("image_dir", nargs="?")
     argparser.add_argument("class_file",
-                           default=os.path.join(os.path.dirname(__file__), "data", "predefined_classes.txt"),
+                           default=os.path.join(current_dir, "data", "predefined_classes.txt"),
                            nargs="?")
     argparser.add_argument("save_dir", nargs="?")
     args = argparser.parse_args(argv[1:])
